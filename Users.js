@@ -4,8 +4,8 @@ var bcrypt = require('bcrypt-nodejs');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.DB, { userNewUrlParser: true });
-// mongoose.set('useCreateIndex', true);
+mongoose.connect(process.env.DB, { useNewUrlParser: true });
+mongoose.set('useCreateIndex', true);
 
 // user schema
 var UserSchema = new Schema({
@@ -20,7 +20,7 @@ UserSchema.pre('save', function(next) {
     // hash the password
     if (!user.isModified('password')) return(next);
 
-    bcrypt.hash(user.password, null, null, function(err, hash) {
+    bcrypt.hash(user.password, null, null,function(err, hash) {
         if (err) return next(err);
 
         // change the password
