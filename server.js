@@ -13,6 +13,7 @@ var authJwtController = require('./auth_jwt');
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
 var User = require('./Users');
+var Movie = require('./Movies');
 
 var app = express();
 app.use(cors()); // allowing browser to call
@@ -44,7 +45,7 @@ function getJSONObjectForMovieRequirement(req) {
 }
 
 router.post('/signup', function(req, res) {
-    // if no username or password then return return failure with message
+    // if no username or password then return failure with message
     if (!req.body.username || !req.body.password) {
         res.json({success: false, msg: 'Please include both username and password to signup.'})
     } else { // else create new user
@@ -88,8 +89,8 @@ router.post('/signin', function (req, res) {
     });
 });
 
-// // Movie route
-// router.route('/movies')
+// Movie route
+router.route('/movies')
 //     // GET functionality
 //     .get(function(req, res) {
 //         res = res.status(200);          // return status of 200
@@ -101,17 +102,33 @@ router.post('/signin', function (req, res) {
 //         o.query = req.query;            // change the json query info to user query, if there was one
 //         res.json(o);
 //     })
-//     // POST functionality
-//     .post(function(req, res) {
-//         res = res.status(200);          // return status of 200
-//         if (req.get('Content-Type')) {
-//             res = res.type(req.get('Content-Type'));
-//         }
-//         var o = getJSONObjectForMovieRequirement(req);  // create json object
-//         o.message = "movie saved"       // change the json message
-//         o.query = req.query;            // change the json query info to user query, if there was one
-//         res.json(o);
-//     })
+    // POST functionality
+    .post(function(req, res) {
+        // make sure the user input all required entries for a new movie
+        if (!req.body.title && !req.body.released && !req.body.genre && !req.body.actor1 && !req.body.actor2 && !req.body.actor3) {
+            res.json({success: false, msg: 'Please include "title", "year released", "genre", and at least 3 actors.'})
+        } else { // else create new user
+            var movie = new Movie();
+            movie.title = req.body.title;
+            movie.released = req.body.released;
+            movie.genre = req.body.genre;
+            movie.actor1 = req.body.actor1;
+            movie.actor2 = req.body.actor2;
+            movie.actor3 = req.body.actor3;
+
+            res.json({success: true, msg: 'Successfully created new user.'})
+        }
+    });
+
+        // res = res.status(200);          // return status of 200
+        // if (req.get('Content-Type')) {
+        //     res = res.type(req.get('Content-Type'));
+        // }
+        // var o = getJSONObjectForMovieRequirement(req);  // create json object
+        // o.message = "movie saved"       // change the json message
+        // o.query = req.query;            // change the json query info to user query, if there was one
+        // res.json(o);
+    // })
 //     .put(authJwtController.isAuthenticated, function(req, res) {
 //         console.log(req.body);
 //         res = res.status(200);          // return status of 200
