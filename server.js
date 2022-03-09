@@ -105,8 +105,8 @@ router.route('/movies')
     // POST functionality
     .post(function(req, res) {
         // make sure the user input all required entries for a new movie
-        if (!req.body.title && !req.body.released && !req.body.genre && !req.body.actor1 && !req.body.actor2 && !req.body.actor3) {
-            res.json({success: false, msg: 'Please include "title", "year released", "genre", and at least 3 actors.'})
+        if (!req.body.title || !req.body.released || !req.body.genre || !req.body.actor1 || !req.body.actor2 || !req.body.actor3) {
+            res.json({success: false, msg: "Please include 'title', 'year released', 'genre', and at least 3 actors."})
         } else { // else create new user
             var movie = new Movie();
             movie.title = req.body.title;
