@@ -116,7 +116,7 @@ router.route('/movies')
             movie.actor2 = req.body.actor2;
             movie.actor3 = req.body.actor3;
 
-            res.json({success: true, msg: 'Successfully created new user.'})
+            res.json({success: true, msg: 'Successfully added new movie.'})
         }
     });
 
