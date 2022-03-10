@@ -74,11 +74,12 @@ router.post('/signin', function (req, res) {
 
     User.findOne({username: userNew.username}).select('name username password').exec(function (err, user) {
         if (err) {
-            res.json({ success: false, message: "User not found in database." })
-            // res.send(err);
+            res.send(err);
+        }
+        else if(!userNew.username || !userNew.password) {
+            res.json({success: false, message: "User not found in database." })
         }
         else {
-
             user.comparePassword(userNew.password, function (isMatch) {
                 if (isMatch) {
                     var userToken = {id: user.id, username: user.username};
