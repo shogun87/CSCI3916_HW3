@@ -76,7 +76,7 @@ router.post('/signin', function (req, res) {
         if (err) {
             res.send(err);
         }
-        else if(!userNew.username || !userNew.password) {
+        else if(!userNew.username || !userNew.password || !user) {
             res.json({success: false, message: "User not found in database." })
         }
         else {
