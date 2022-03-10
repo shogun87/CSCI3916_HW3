@@ -116,7 +116,16 @@ router.route('/movies')
             movie.actor2 = req.body.actor2;
             movie.actor3 = req.body.actor3;
 
-            res.json({success: true, msg: 'Successfully added new movie.'})
+            movie.save(function(err) {
+                if(err) {
+                    return res.json({success: false, message: "Problem saving movie to database."});
+                }
+                else {
+                    return res.json({success: true, message: "Successfully added movie to database."})
+                }
+            })
+
+            // res.json({success: true, msg: 'Successfully added new movie.'})
         }
     });
 
