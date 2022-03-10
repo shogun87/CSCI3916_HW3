@@ -109,16 +109,18 @@ router.route('/movies')
     // POST functionality
     .post(authJwtController.isAuthenticated, function(req, res) {
         // make sure the user input all required entries for a new movie
-        if (!req.body.title || !req.body.released || !req.body.genre || !req.body.actor1 || !req.body.actor2 || !req.body.actor3) {
+        // if (!req.body.title || !req.body.released || !req.body.genre || !req.body.actor1 || !req.body.actor2 || !req.body.actor3) {
+        if (!req.body.title || !req.body.released || !req.body.genre || req.body.actors.length < 3) {
             res.json({success: false, msg: "Please include 'title', 'year released', 'genre', and at least 3 actors."})
         } else { // else create new user
             var movie = new Movie();
             movie.title = req.body.title;
             movie.released = req.body.released;
             movie.genre = req.body.genre;
-            movie.actor1 = req.body.actor1;
-            movie.actor2 = req.body.actor2;
-            movie.actor3 = req.body.actor3;
+            movie.actors = req.body.actors;
+            // movie.actor1 = req.body.actor1;
+            // movie.actor2 = req.body.actor2;
+            // movie.actor3 = req.body.actor3;
 
             movie.save(function(err) {
                 if(err) {
