@@ -74,7 +74,7 @@ router.post('/signin', function (req, res) {
 
     User.findOne({username: userNew.username}).select('name username password').exec(function (err, user) {
         if (err) {
-            return res.json({ success: false, message: "User not found in database." })
+            res.json({ success: false, message: "User not found in database." })
             // res.send(err);
         }
         else {
