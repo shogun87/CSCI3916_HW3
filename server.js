@@ -91,17 +91,17 @@ router.post('/signin', function (req, res) {
 
 // Movie route
 router.route('/movies')
-//     // GET functionality
-//     .get(function(req, res) {
-//         res = res.status(200);          // return status of 200
-//         if (req.get('Content-Type')) {
-//             res = res.type(req.get('Content-Type'));
-//         }
-//         var o = getJSONObjectForMovieRequirement(req);  // create json object
-//         o.message = "GET movies"        // change the json message
-//         o.query = req.query;            // change the json query info to user query, if there was one
-//         res.json(o);
-//     })
+    // GET functionality
+    .get(authJwtController.isAuthenticated, function(req, res) {
+        Movie.find({}, function(err, movies){
+            if(err){
+                return res.json({success: false, message: "Failed to get Movies from database."})
+            }
+            else{
+                return res.json(movies);
+            }
+        })
+    })
     // POST functionality
     .post(authJwtController.isAuthenticated, function(req, res) {
         // make sure the user input all required entries for a new movie
