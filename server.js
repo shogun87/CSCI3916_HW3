@@ -124,42 +124,31 @@ router.route('/movies')
                     return res.json({success: true, message: "Successfully added movie to database."})
                 }
             })
-
-            // res.json({success: true, msg: 'Successfully added new movie.'})
         }
-    });
-
-        // res = res.status(200);          // return status of 200
-        // if (req.get('Content-Type')) {
-        //     res = res.type(req.get('Content-Type'));
-        // }
-        // var o = getJSONObjectForMovieRequirement(req);  // create json object
-        // o.message = "movie saved"       // change the json message
-        // o.query = req.query;            // change the json query info to user query, if there was one
-        // res.json(o);
+    })
+    // // PUT functionality
+    // .put(authJwtController.isAuthenticated, function(req, res) {
+    //     console.log(req.body);
+    //     res = res.status(200);          // return status of 200
+    //     if (req.get('Content-Type')) {
+    //         res = res.type(req.get('Content-Type'));
+    //     }
+    //     var o = getJSONObjectForMovieRequirement(req);  // create json object
+    //     o.message = "movie updated"     // change the json message
+    //     o.query = req.query;            // change the json query info to user query, if there was one
+    //     res.json(o);
     // })
-//     .put(authJwtController.isAuthenticated, function(req, res) {
-//         console.log(req.body);
-//         res = res.status(200);          // return status of 200
-//         if (req.get('Content-Type')) {
-//             res = res.type(req.get('Content-Type'));
-//         }
-//         var o = getJSONObjectForMovieRequirement(req);  // create json object
-//         o.message = "movie updated"     // change the json message
-//         o.query = req.query;            // change the json query info to user query, if there was one
-//         res.json(o);
-//     })
-//     .delete(authController.isAuthenticated, function(req, res) {
-//         console.log(req.body);
-//         res = res.status(200);          // return status of 200
-//         if (req.get('Content-Type')) {
-//             res = res.type(req.get('Content-Type'));
-//         }
-//         var o = getJSONObjectForMovieRequirement(req);  // create json object
-//         o.message = "movie deleted"     // change the json message
-//         o.query = req.query;            // change the json query info to user query, if there was one
-//         res.json(o);
-//     });
+    // DELETE functionality
+    .delete(authJwtController.isAuthenticated, function(req, res) {
+        Movie.remove({ title: req.body.title }, (err) => {
+            if(err){
+                return res.json({ success: false, message: "Failed to delete movie from database."})
+            }
+            else {
+                return res.json({ success: true, message: "Movie was deleted from database."})
+            }
+        })
+    });
 
 
 app.use('/', router);
