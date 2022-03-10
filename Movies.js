@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-const bcrypt = require("bcrypt-nodejs");
 var Schema = mongoose.Schema;
 
 
@@ -10,7 +9,7 @@ mongoose.set('useCreateIndex', true);
 
 // user schema
 var MovieSchema = new Schema({
-    title: {type: String, required: true},
+    title: {type: String, required: true, index: { unique: true }},
     released: {type: Number, required: true},
     genre: {type: String, required: true},
     actor1: {type: String, required: true},
