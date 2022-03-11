@@ -102,7 +102,7 @@ router.route('/movies/*')
                 res.send(err);
             }
             else if(!movie) {
-                res.json({success: false, message: "Movie not found in database." })
+                res.status(400).json({success: false, message: "Movie not found in database." })
             }
             else{
                 res.status(200).json(movie)
@@ -127,10 +127,10 @@ router.route('/movies/*')
     .delete(authJwtController.isAuthenticated, function(req, res) {
         Movie.remove({ title: req.params['0'] }, (err) => {
             if(err){
-                return res.json({ success: false, message: "Failed to delete movie from database."})
+                return res.status(400).json({ success: false, message: "Failed to delete movie from database."})
             }
             else {
-                return res.json({ success: true, message: "Movie was deleted from database."})
+                return res.status(200).json({ success: true, message: "Movie was deleted from database."})
             }
         })
     });
@@ -141,10 +141,10 @@ router.route('/movies')
     .get(authJwtController.isAuthenticated, function(req, res) {
         Movie.find({}, function(err, movies){
             if(err){
-                return res.json({success: false, message: "Failed to get Movies from database."})
+                return res.status(401).json({success: false, message: "Failed to get Movies from database."})
             }
             else{
-                return res.json(movies);
+                return res.status(200).json(movies);
             }
         })
     })
@@ -166,10 +166,10 @@ router.route('/movies')
 
             movie.save(function(err) {
                 if(err) {
-                    return res.json({success: false, message: "Problem saving movie to database."});
+                    return res.status(400).json({success: false, message: "Problem saving movie to database."});
                 }
                 else {
-                    return res.json({success: true, message: "Successfully added movie to database."})
+                    return res.status(200).json({success: true, message: "Successfully added movie to database."})
                 }
             })
         }
