@@ -96,7 +96,7 @@ router.post('/signin', function (req, res) {
 // Movie route with parameters
 router.route('/movies/*')
     // GET functionality with /movies/:movieparameters
-    .get(authJwtController.isAuthenticated, function(err, res) {
+    .get(authJwtController.isAuthenticated, function(req, res) {
         Movie.findOne({ title: req.params.title }.select("title released genre actors").exec(function(err, movie) {
             if(err){
                 res.send(err);
