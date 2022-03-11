@@ -93,6 +93,48 @@ router.post('/signin', function (req, res) {
     });
 });
 
+// Movie route with parameters
+router.route('/movies/*')
+    // GET functionality with /movies/:movieparameters
+    .get(authJwtController.isAuthenticated, function(err, res) {
+        Movie.findOne({ title: req.params.title }.select("title released genre actors").exec(function(err, movie) {
+            if(err){
+                res.send(err);
+            }
+            else if(!req.params.title || !movie) {
+                res.json({success: false, message: "User not found in database." })
+            }
+            else{
+                res.json({ success: true, message: "Successfully got movie."})
+            }
+        }))
+    })
+
+    // // PUT functionality
+    // .put(authJwtController.isAuthenticated, function(req, res) {
+    //     console.log(req.body);
+    //     res = res.status(200);          // return status of 200
+    //     if (req.get('Content-Type')) {
+    //         res = res.type(req.get('Content-Type'));
+    //     }
+    //     var o = getJSONObjectForMovieRequirement(req);  // create json object
+    //     o.message = "movie updated"     // change the json message
+    //     o.query = req.query;            // change the json query info to user query, if there was one
+    //     res.json(o);
+    // })
+
+    // DELETE functionality
+    // .delete(authJwtController.isAuthenticated, function(req, res) {
+    //     Movie.remove({ title: req.body.title }, (err) => {
+    //         if(err){
+    //             return res.json({ success: false, message: "Failed to delete movie from database."})
+    //         }
+    //         else {
+    //             return res.json({ success: true, message: "Movie was deleted from database."})
+    //         }
+    //     })
+    // });
+
 // Movie route
 router.route('/movies')
     // GET functionality
@@ -144,17 +186,17 @@ router.route('/movies')
     //     o.query = req.query;            // change the json query info to user query, if there was one
     //     res.json(o);
     // })
-    // DELETE functionality
-    .delete(authJwtController.isAuthenticated, function(req, res) {
-        Movie.remove({ title: req.body.title }, (err) => {
-            if(err){
-                return res.json({ success: false, message: "Failed to delete movie from database."})
-            }
-            else {
-                return res.json({ success: true, message: "Movie was deleted from database."})
-            }
-        })
-    });
+    // // DELETE functionality
+    // .delete(authJwtController.isAuthenticated, function(req, res) {
+    //     Movie.remove({ title: req.body.title }, (err) => {
+    //         if(err){
+    //             return res.json({ success: false, message: "Failed to delete movie from database."})
+    //         }
+    //         else {
+    //             return res.json({ success: true, message: "Movie was deleted from database."})
+    //         }
+    //     })
+    // });
 
 
 app.use('/', router);
