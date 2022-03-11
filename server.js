@@ -108,7 +108,7 @@ router.route('/movies/*')
                 res.status(200).json(movie)
             }
         })
-    });
+    })
 
     // // PUT functionality
     // .put(authJwtController.isAuthenticated, function(req, res) {
@@ -124,16 +124,16 @@ router.route('/movies/*')
     // })
 
     // DELETE functionality
-    // .delete(authJwtController.isAuthenticated, function(req, res) {
-    //     Movie.remove({ title: req.body.title }, (err) => {
-    //         if(err){
-    //             return res.json({ success: false, message: "Failed to delete movie from database."})
-    //         }
-    //         else {
-    //             return res.json({ success: true, message: "Movie was deleted from database."})
-    //         }
-    //     })
-    // });
+    .delete(authJwtController.isAuthenticated, function(req, res) {
+        Movie.remove({ title: req.params['0'] }, (err) => {
+            if(err){
+                return res.json({ success: false, message: "Failed to delete movie from database."})
+            }
+            else {
+                return res.json({ success: true, message: "Movie was deleted from database."})
+            }
+        })
+    });
 
 // Movie route
 router.route('/movies')
