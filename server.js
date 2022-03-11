@@ -153,7 +153,7 @@ router.route('/movies')
         // make sure the user input all required entries for a new movie
         // if (!req.body.title || !req.body.released || !req.body.genre || !req.body.actor1 || !req.body.actor2 || !req.body.actor3) {
         if (!req.body.title || !req.body.released || !req.body.genre || req.body.actors.length < 3) {
-            res.json({success: false, msg: "Please include 'title', 'year released', 'genre', and at least 3 actors."})
+            res.status(400).json({success: false, msg: "Please include 'title', 'year released', 'genre', and at least 3 actors."})
         } else { // else create new user
             var movie = new Movie();
             movie.title = req.body.title;
@@ -166,7 +166,7 @@ router.route('/movies')
 
             movie.save(function(err) {
                 if(err) {
-                    return res.status(400).json({success: false, message: "Problem saving movie to database."});
+                    return res.status(500).json({success: false, message: "Problem saving movie to database."});
                 }
                 else {
                     return res.status(200).json({success: true, message: "Successfully added movie to database."})
