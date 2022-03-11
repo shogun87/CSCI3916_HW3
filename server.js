@@ -166,7 +166,7 @@ router.route('/movies')
 
             movie.save(function(err) {
                 if(err) {
-                    return res.status(500).json({success: false, message: "Problem saving movie to database."});
+                    return res.status(409).json({success: false, message: "Movie already in database."});
                 }
                 else {
                     return res.status(200).json({success: true, message: "Successfully added movie to database."})
