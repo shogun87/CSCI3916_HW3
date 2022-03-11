@@ -8,7 +8,7 @@ var express = require('express');
 // var http = require('http');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-var authController = require('./auth');
+// var authController = require('./auth');
 var authJwtController = require('./auth_jwt');
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
@@ -24,25 +24,25 @@ app.use(passport.initialize());
 
 var router = express.Router(); // so we can use get requests
 
-function getJSONObjectForMovieRequirement(req) {
-    var json = {
-        headers: "No headers",
-        key: process.env.UNIQUE_KEY,
-        body: "No body",
-        message: "",            // added message parameter to send back in response
-        query: ""               // added query parameter to send back queries in response
-    };
-
-    if (req.body != null) {
-        json.body = req.body;
-    }
-
-    if (req.headers != null) {
-        json.headers = req.headers;
-    }
-
-    return json;
-}
+// function getJSONObjectForMovieRequirement(req) {
+//     var json = {
+//         headers: "No headers",
+//         key: process.env.UNIQUE_KEY,
+//         body: "No body",
+//         message: "",            // added message parameter to send back in response
+//         query: ""               // added query parameter to send back queries in response
+//     };
+//
+//     if (req.body != null) {
+//         json.body = req.body;
+//     }
+//
+//     if (req.headers != null) {
+//         json.headers = req.headers;
+//     }
+//
+//     return json;
+// }
 
 router.post('/signup', function(req, res) {
     // if no username or password then return failure with message
@@ -76,6 +76,7 @@ router.post('/signin', function (req, res) {
         if (err) {
             res.send(err);
         }
+        // added extra logic to catch if user isn't in the database
         else if(!userNew.username || !userNew.password || !user) {
             res.json({success: false, message: "User not found in database." })
         }
@@ -97,6 +98,7 @@ router.post('/signin', function (req, res) {
 router.route('/movies/*')
     // GET functionality with /movies/:movieparameters
     .get(authJwtController.isAuthenticated, function(req, res) {
+        // use findOne to find movie based on request parameter
         Movie.findOne({ title: req.params[0] }, function(err, movie) {
             if(err){
                 res.send(err);
@@ -110,21 +112,23 @@ router.route('/movies/*')
         })
     })
 
-    // // PUT functionality
-    // .put(authJwtController.isAuthenticated, function(req, res) {
-    //     console.log(req.body);
-    //     res = res.status(200);          // return status of 200
-    //     if (req.get('Content-Type')) {
-    //         res = res.type(req.get('Content-Type'));
-    //     }
-    //     var o = getJSONObjectForMovieRequirement(req);  // create json object
-    //     o.message = "movie updated"     // change the json message
-    //     o.query = req.query;            // change the json query info to user query, if there was one
-    //     res.json(o);
-    // })
+    // PUT functionality
+    .put(authJwtController.isAuthenticated, function(req, res) {
+        // find entry based on parameter and update it based on the request body
+        Movie.findOneAndUpdate({ title: req.params['0'] },  req.body , { new: true },
+            function(err) {
+            if(err) {
+                res.status(400).json({ success: false, message: "Failed the update movie." })
+            }
+            else {
+                res.status(200).json({ success: true, message: "Successfully updated movie." })
+            }
+        })
+    })
 
     // DELETE functionality
     .delete(authJwtController.isAuthenticated, function(req, res) {
+        // remove movie based on request parameter movie title
         Movie.remove({ title: req.params['0'] }, (err) => {
             if(err){
                 return res.status(400).json({ success: false, message: "Failed to delete movie from database."})
@@ -139,6 +143,7 @@ router.route('/movies/*')
 router.route('/movies')
     // GET functionality
     .get(authJwtController.isAuthenticated, function(req, res) {
+        // find and return all movies in the database
         Movie.find({}, function(err, movies){
             if(err){
                 return res.status(401).json({success: false, message: "Failed to get Movies from database."})
@@ -148,22 +153,20 @@ router.route('/movies')
             }
         })
     })
+
     // POST functionality
     .post(authJwtController.isAuthenticated, function(req, res) {
-        // make sure the user input all required entries for a new movie
-        // if (!req.body.title || !req.body.released || !req.body.genre || !req.body.actor1 || !req.body.actor2 || !req.body.actor3) {
+        // make sure the user input has all required entries for a new movie
         if (!req.body.title || !req.body.released || !req.body.genre || req.body.actors.length < 3) {
             res.status(400).json({success: false, msg: "Please include 'title', 'year released', 'genre', and at least 3 actors."})
-        } else { // else create new user
+        } else { // else create new movie
             var movie = new Movie();
             movie.title = req.body.title;
             movie.released = req.body.released;
             movie.genre = req.body.genre;
             movie.actors = req.body.actors;
-            // movie.actor1 = req.body.actor1;
-            // movie.actor2 = req.body.actor2;
-            // movie.actor3 = req.body.actor3;
 
+            // save the new movie
             movie.save(function(err) {
                 if(err) {
                     return res.status(409).json({success: false, message: "Movie already in database."});
@@ -174,6 +177,7 @@ router.route('/movies')
             })
         }
     })
+
     // // PUT functionality
     // .put(authJwtController.isAuthenticated, function(req, res) {
     //     console.log(req.body);
@@ -186,6 +190,7 @@ router.route('/movies')
     //     o.query = req.query;            // change the json query info to user query, if there was one
     //     res.json(o);
     // })
+
     // // DELETE functionality
     // .delete(authJwtController.isAuthenticated, function(req, res) {
     //     Movie.remove({ title: req.body.title }, (err) => {
