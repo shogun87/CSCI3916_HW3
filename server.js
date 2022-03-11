@@ -97,11 +97,11 @@ router.post('/signin', function (req, res) {
 router.route('/movies/*')
     // GET functionality with /movies/:movieparameters
     .get(authJwtController.isAuthenticated, function(req, res) {
-        Movie.findOne({ title: req.params[0] }).select('title released genre').exec(function(err, movie) {
+        Movie.findOne({ title: req.params[0] }, function(err, movie) {
             if(err){
                 res.send(err);
             }
-            else if(!req.params.title || !movie) {
+            else if(!movie) {
                 res.json({success: false, message: "Movie not found in database." })
             }
             else{
